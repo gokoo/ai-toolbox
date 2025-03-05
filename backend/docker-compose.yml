@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  # 后端API服务
+  api:
+    build: .
+    container_name: ai-toolbox-api
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./uploads:/app/uploads
+      - ./logs:/app/logs
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DATABASE_URI=mongodb://mongo:27017/ai-toolbox
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=90d
+      - JWT_COOKIE_EXPIRES_IN=90
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_API_MODEL=${OPENAI_API_MODEL:-gpt-4-turbo}
+      - CORS_ORIGIN=${CORS_ORIGIN:-*}
+    depends_on:
+      - mongo
+    networks:
+      - app-network
+
+  # MongoDB数据库
+  mongo:
+    image: mongo:6
+    container_name: ai-toolbox-mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME:-root}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD:-root}
+    networks:
+      - app-network
+
+volumes:
+  mongo-data:
+
+networks:
+  app-network:
+    driver: bridge 

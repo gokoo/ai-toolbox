@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI工具箱测试客户端</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      padding-top: 2rem;
+      padding-bottom: 2rem;
+    }
+    .card {
+      margin-bottom: 1.5rem;
+    }
+    .result-container {
+      max-height: 400px;
+      overflow-y: auto;
+      background-color: #f8f9fa;
+      padding: 1rem;
+      border-radius: 0.25rem;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+    .nav-tabs {
+      margin-bottom: 1rem;
+    }
+    .spinner-border {
+      display: none;
+      margin-left: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="mb-4 text-center">AI工具箱测试客户端</h1>
+    
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="prototype-tab" data-bs-toggle="tab" data-bs-target="#prototype" type="button" role="tab">原型生成</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="copywriting-tab" data-bs-toggle="tab" data-bs-target="#copywriting" type="button" role="tab">文案生成</button>
+      </li>
+    </ul>
+    
+    <div class="tab-content" id="myTabContent">
+      <!-- 原型生成 -->
+      <div class="tab-pane fade show active" id="prototype" role="tabpanel">
+        <div class="card">
+          <div class="card-header">
+            <h5>获取原型模板</h5>
+          </div>
+          <div class="card-body">
+            <button id="getPrototypeTemplates" class="btn btn-primary">获取模板列表</button>
+            <span class="spinner-border spinner-border-sm" id="prototype-templates-spinner"></span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <h5>生成原型</h5>
+          </div>
+          <div class="card-body">
+            <form id="generatePrototypeForm">
+              <div class="mb-3">
+                <label for="prototypeTemplateId" class="form-label">模板ID</label>
+                <select class="form-select" id="prototypeTemplateId" required>
+                  <option value="">请选择模板</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="prototypeDescription" class="form-label">描述</label>
+                <textarea class="form-control" id="prototypeDescription" rows="3" placeholder="请描述您想要的界面" required></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="prototypeElements" class="form-label">元素（可选）</label>
+                <input type="text" class="form-control" id="prototypeElements" placeholder="例如：导航栏、按钮、表单">
+              </div>
+              <div class="mb-3">
+                <label for="prototypeStyle" class="form-label">风格（可选）</label>
+                <input type="text" class="form-control" id="prototypeStyle" placeholder="例如：现代简约、扁平化">
+              </div>
+              <button type="submit" class="btn btn-success">生成原型</button>
+              <span class="spinner-border spinner-border-sm" id="generate-prototype-spinner"></span>
+            </form>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 文案生成 -->
+      <div class="tab-pane fade" id="copywriting" role="tabpanel">
+        <div class="card">
+          <div class="card-header">
+            <h5>获取文案模板</h5>
+          </div>
+          <div class="card-body">
+            <button id="getCopywritingTemplates" class="btn btn-primary">获取模板列表</button>
+            <span class="spinner-border spinner-border-sm" id="copywriting-templates-spinner"></span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <h5>生成文案</h5>
+          </div>
+          <div class="card-body">
+            <form id="generateCopyForm">
+              <div class="mb-3">
+                <label for="copyTemplateId" class="form-label">模板ID</label>
+                <select class="form-select" id="copyTemplateId" required>
+                  <option value="">请选择模板</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="copyProduct" class="form-label">产品/服务</label>
+                <input type="text" class="form-control" id="copyProduct" placeholder="请输入产品或服务名称" required>
+              </div>
+              <div class="mb-3">
+                <label for="copyAudience" class="form-label">目标受众（可选）</label>
+                <input type="text" class="form-control" id="copyAudience" placeholder="例如：25-40岁的职场人士">
+              </div>
+              <div class="mb-3">
+                <label for="copyTone" class="form-label">语调（可选）</label>
+                <input type="text" class="form-control" id="copyTone" placeholder="例如：专业、友好、幽默">
+              </div>
+              <div class="mb-3">
+                <label for="copyKeywords" class="form-label">关键词（可选）</label>
+                <input type="text" class="form-control" id="copyKeywords" placeholder="例如：高效、智能、便捷">
+              </div>
+              <button type="submit" class="btn btn-success">生成文案</button>
+              <span class="spinner-border spinner-border-sm" id="generate-copy-spinner"></span>
+            </form>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <h5>分析文案</h5>
+          </div>
+          <div class="card-body">
+            <form id="analyzeCopyForm">
+              <div class="mb-3">
+                <label for="copyContent" class="form-label">文案内容</label>
+                <textarea class="form-control" id="copyContent" rows="5" placeholder="请输入要分析的文案内容" required></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="copyAnalysisAudience" class="form-label">目标受众（可选）</label>
+                <input type="text" class="form-control" id="copyAnalysisAudience" placeholder="例如：25-40岁的职场人士">
+              </div>
+              <div class="mb-3">
+                <label for="copyPlatform" class="form-label">发布平台（可选）</label>
+                <input type="text" class="form-control" id="copyPlatform" placeholder="例如：微信、微博、小红书">
+              </div>
+              <button type="submit" class="btn btn-info">分析文案</button>
+              <span class="spinner-border spinner-border-sm" id="analyze-copy-spinner"></span>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card mt-4">
+      <div class="card-header">
+        <h5>结果</h5>
+      </div>
+      <div class="card-body">
+        <div id="result" class="result-container">结果将显示在这里...</div>
+      </div>
+    </div>
+    
+    <div class="card mt-4">
+      <div class="card-header">
+        <h5>预览</h5>
+      </div>
+      <div class="card-body">
+        <div id="preview-container">
+          <p class="text-center">生成的原型或文案预览将显示在这里...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // API基础URL
+    const API_BASE_URL = 'http://localhost:3000/api/v1';
+    
+    // 结果显示区域
+    const resultElement = document.getElementById('result');
+    const previewContainer = document.getElementById('preview-container');
+    
+    // 显示结果
+    function showResult(data) {
+      resultElement.textContent = JSON.stringify(data, null, 2);
+    }
+    
+    // 显示错误
+    function showError(error) {
+      resultElement.textContent = `错误: ${error.message}\n${JSON.stringify(error, null, 2)}`;
+    }
+    
+    // 显示加载中
+    function showSpinner(id, show) {
+      const spinner = document.getElementById(id);
+      spinner.style.display = show ? 'inline-block' : 'none';
+    }
+    
+    // 显示预览
+    function showPreview(type, data) {
+      if (type === 'prototype') {
+        previewContainer.innerHTML = `
+          <div class="ratio ratio-16x9">
+            <iframe src="${data.previewUrl}" title="原型预览" allowfullscreen></iframe>
+          </div>
+        `;
+      } else if (type === 'copy') {
+        previewContainer.innerHTML = `
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">文案预览</h5>
+              <div class="card-text" style="white-space: pre-wrap;">${data.content}</div>
+            </div>
+          </div>
+        `;
+      } else if (type === 'analysis') {
+        previewContainer.innerHTML = `
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">文案分析</h5>
+              <div class="card-text" style="white-space: pre-wrap;">${data.analysis}</div>
+            </div>
+          </div>
+        `;
+      }
+    }
+    
+    // 获取原型模板
+    document.getElementById('getPrototypeTemplates').addEventListener('click', async () => {
+      try {
+        showSpinner('prototype-templates-spinner', true);
+        const response = await fetch(`${API_BASE_URL}/prototype/templates`);
+        const data = await response.json();
+        showResult(data);
+        
+        // 填充模板选择框
+        const select = document.getElementById('prototypeTemplateId');
+        select.innerHTML = '<option value="">请选择模板</option>';
+        
+        if (data.status === 'success') {
+          data.data.templates.forEach(template => {
+            const option = document.createElement('option');
+            option.value = template.id;
+            option.textContent = `${template.name} - ${template.description}`;
+            select.appendChild(option);
+          });
+        }
+      } catch (error) {
+        showError(error);
+      } finally {
+        showSpinner('prototype-templates-spinner', false);
+      }
+    });
+    
+    // 生成原型
+    document.getElementById('generatePrototypeForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      try {
+        showSpinner('generate-prototype-spinner', true);
+        
+        const templateId = document.getElementById('prototypeTemplateId').value;
+        const description = document.getElementById('prototypeDescription').value;
+        const elements = document.getElementById('prototypeElements').value;
+        const style = document.getElementById('prototypeStyle').value;
+        
+        const response = await fetch(`${API_BASE_URL}/prototype/generate`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            templateId,
+            description,
+            elements,
+            style,
+          }),
+        });
+        
+        const data = await response.json();
+        showResult(data);
+        
+        if (data.status === 'success') {
+          showPreview('prototype', data.data);
+        }
+      } catch (error) {
+        showError(error);
+      } finally {
+        showSpinner('generate-prototype-spinner', false);
+      }
+    });
+    
+    // 获取文案模板
+    document.getElementById('getCopywritingTemplates').addEventListener('click', async () => {
+      try {
+        showSpinner('copywriting-templates-spinner', true);
+        const response = await fetch(`${API_BASE_URL}/copywriting/templates`);
+        const data = await response.json();
+        showResult(data);
+        
+        // 填充模板选择框
+        const select = document.getElementById('copyTemplateId');
+        select.innerHTML = '<option value="">请选择模板</option>';
+        
+        if (data.status === 'success') {
+          data.data.templates.forEach(template => {
+            const option = document.createElement('option');
+            option.value = template.id;
+            option.textContent = `${template.name} - ${template.description}`;
+            select.appendChild(option);
+          });
+        }
+      } catch (error) {
+        showError(error);
+      } finally {
+        showSpinner('copywriting-templates-spinner', false);
+      }
+    });
+    
+    // 生成文案
+    document.getElementById('generateCopyForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      try {
+        showSpinner('generate-copy-spinner', true);
+        
+        const templateId = document.getElementById('copyTemplateId').value;
+        const product = document.getElementById('copyProduct').value;
+        const audience = document.getElementById('copyAudience').value;
+        const tone = document.getElementById('copyTone').value;
+        const keywords = document.getElementById('copyKeywords').value;
+        
+        const response = await fetch(`${API_BASE_URL}/copywriting/generate`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            templateId,
+            product,
+            audience,
+            tone,
+            keywords,
+          }),
+        });
+        
+        const data = await response.json();
+        showResult(data);
+        
+        if (data.status === 'success') {
+          showPreview('copy', data.data);
+          
+          // 自动填充分析表单
+          document.getElementById('copyContent').value = data.data.content;
+        }
+      } catch (error) {
+        showError(error);
+      } finally {
+        showSpinner('generate-copy-spinner', false);
+      }
+    });
+    
+    // 分析文案
+    document.getElementById('analyzeCopyForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      try {
+        showSpinner('analyze-copy-spinner', true);
+        
+        const content = document.getElementById('copyContent').value;
+        const audience = document.getElementById('copyAnalysisAudience').value;
+        const platform = document.getElementById('copyPlatform').value;
+        
+        const response = await fetch(`${API_BASE_URL}/copywriting/analyze`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            content,
+            audience,
+            platform,
+          }),
+        });
+        
+        const data = await response.json();
+        showResult(data);
+        
+        if (data.status === 'success') {
+          showPreview('analysis', data.data);
+        }
+      } catch (error) {
+        showError(error);
+      } finally {
+        showSpinner('analyze-copy-spinner', false);
+      }
+    });
+  </script>
+</body>
+</html> 
