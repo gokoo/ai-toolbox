@@ -44,7 +44,4 @@ coverage/
 
 # 其他
 .DS_Store
-Thumbs.db
-
-# 排除嵌入的 Git 仓库
-frontend/lobe-chat/ 
+Thumbs.db 
